@@ -12,6 +12,17 @@ const displayAge = document.getElementById('displayAge');
 let age = 30;
 let allMarkers = [];
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('serviceworker.js').then(function (registration) {
+    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+  }).catch(function (err) {
+    //registration failed :(
+    console.log('ServiceWorker registration failed: ', err);
+  });
+} else {
+  console.log('No service-worker on this browser');
+}
+
 slider.addEventListener('change', sliderChange);
 slider.value = age;
 
@@ -30,31 +41,31 @@ const map = new mapboxgl.Map({
 
 function fetchPeople(age) {
   displayAge.textContent = age;
-  
+
   return axios.get('https://apps.integralgis.com/node/integralgis/people.json')
-  .then(function(res) {
-    const filteredPeople = filter(res.data, function(person) {
-      return person.age < age;
-    });
+    .then(function (res) {
+      const filteredPeople = filter(res.data, function (person) {
+        return person.age < age;
+      });
 
-    return filteredPeople.map(function (person) {
-      const name = document.createElement('p');
-      
-      name.classList.add('listOfPeople');
-      name.textContent = person.name;
-      emp.appendChild(name);
-      
+      return filteredPeople.map(function (person) {
+        const name = document.createElement('p');
 
-      const popup = new mapboxgl.Popup()
-      .setHTML(`<h3 class="popup">${person.name}</h3>`);
-      
-      const marker = new mapboxgl.Marker()
-      .setLngLat([person.longitude, person.latitude])
-      .setPopup(popup)
-      .addTo(map);
-      allMarkers.push(marker);
+        name.classList.add('listOfPeople');
+        name.textContent = person.name;
+        emp.appendChild(name);
+
+
+        const popup = new mapboxgl.Popup()
+          .setHTML(`<h3 class="popup">${person.name}</h3>`);
+
+        const marker = new mapboxgl.Marker()
+          .setLngLat([person.longitude, person.latitude])
+          .setPopup(popup)
+          .addTo(map);
+        allMarkers.push(marker);
+      })
     })
-  })
 }
 
 fetchPeople(age);
