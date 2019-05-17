@@ -9,3 +9,10 @@ The data given is a little confusing because the map is focused on Seattle, but 
 I protected the api keys so this won't run with out a mapbox account and assigning the keys. I stored them in a keys.js file locally.
 
 Finally, the babel is configured for es2015, so that is what I used. (In hindsight I might have changed the settings to ecma 6).
+
+To set up environment:
+- Run 'npm install'
+
+To start development:
+- run 'npm start'
+- navigate to http://localhost:8081

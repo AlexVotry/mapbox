@@ -28,38 +28,42 @@ const map = new mapboxgl.Map({
     style: MAPBOX_STYLE
 });
 
-function fetchPeople(age) {
-  displayAge.textContent = age;
-  
+function fetchPeople() {
   return axios.get('https://apps.integralgis.com/node/integralgis/people.json')
   .then(function(res) {
+    return res.data;
+  });
+};
+
+const allPeople = fetchPeople();
+  
+function sortPeople(age) {
+  displayAge.textContent = age;
     const filteredPeople = filter(res.data, function(person) {
       return person.age < age;
     });
+  return filteredPeople.map(function (person) {
+    const name = document.createElement('p');
+    
+    name.classList.add('listOfPeople');
+    name.textContent = person.name;
+    emp.appendChild(name);
+    
 
-    return filteredPeople.map(function (person) {
-      const name = document.createElement('p');
-      
-      name.classList.add('listOfPeople');
-      name.textContent = person.name;
-      emp.appendChild(name);
-      
-
-      const popup = new mapboxgl.Popup()
-      .setHTML(`<h3 class="popup">${person.name}</h3>`);
-      
-      const marker = new mapboxgl.Marker()
-      .setLngLat([person.longitude, person.latitude])
-      .setPopup(popup)
-      .addTo(map);
-      allMarkers.push(marker);
-    })
+    const popup = new mapboxgl.Popup()
+    .setHTML(`<h3 class="popup">${person.name}</h3>`);
+    
+    const marker = new mapboxgl.Marker()
+    .setLngLat([person.longitude, person.latitude])
+    .setPopup(popup)
+    .addTo(map);
+    allMarkers.push(marker);
   })
 }
 
-fetchPeople(age);
 
 function sliderChange() {
+  console.log('all:', allPeople);
   age = slider.value;
   clearMap();
   fetchPeople(age)
